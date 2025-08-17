@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "${mod_id}",
+    "name": "${name}",
+    "description": "Miscellaneous features from older Minefantasy versions brought forward and added to Minefantasy: Reforged",
+    "version": "${mod_version}",
+    "mcversion": "${mc_version}",
+    "url": "${url}",
+	"updateUrl": "${update_url}",
+    "authorList": ["Lenvill", "PIPPIP5789"],
+    "credits": "ThatPolishKid, The_Computerizer",
+	"logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

@@ -1,0 +1,171 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+/**
+ * Plugin repositories can be found in the settings.gradle file.
+ */
+plugins {
+    id 'net.minecraftforge.gradle' version '6.0.+'
+    id 'wtf.gofancy.fancygradle' version '1.1.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
+}
+
+fancyGradle {
+    patches {
+        mergetool
+        resources
+        codeChickenLib
+        coremods
+        asm
+    }
+}
+
+//// Project Settings ////
+
+group = "${project.mod_group}" // groupId
+archivesBaseName = "${project.jar_name}" // artifactId - modid
+version = "${project.mc_version}-${project.mod_version}"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
+minecraft {
+
+    mappings channel: project.mappings_channel, version: "${project.mappings_version}-${project.mappings_mc_version}"
+    //accessTransformer = file('src/main/resources/META-INF/minefantasyreforged_at.cfg')
+    //My cat Loki coded this -> 3ww2eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeefred
+
+    runs {
+        client {
+            workingDirectory project.file('run\\client')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'info'
+
+            //jvmArg "-Dfml.coreMods.load=minefantasy.mfr.core.MixinLoader"
+            jvmArg "-Dmixin.hotSwap=true"
+            jvmArg "-Dmixin.checks.interfaces=true"
+        }
+
+        server {
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'info'
+
+            //jvmArg "-Dfml.coreMods.load=minefantasy.mfr.core.MixinLoader"
+            jvmArg "-Dmixin.hotSwap=true"
+            jvmArg "-Dmixin.checks.interfaces=true"
+        }
+    }
+}
+
+//This tells Forge where to look for your mod's resources
+sourceSets.all {
+    it.output.resourcesDir = it.output.classesDirs.getFiles().iterator().next()
+}
+
+repositories {
+    maven {
+        name = 'CurseForge'
+        url = uri('https://www.cursemaven.com')
+        content {
+            includeGroup 'curse.maven'
+        }
+    }
+    maven {
+        name = 'Modrinth'
+        url = uri('https://api.modrinth.com/maven')
+        content {
+            includeGroup 'maven.modrinth'
+        }
+    }
+    maven {
+        //This is needed for you mixins
+        name = 'Sponge'
+        url = uri('https://repo.spongepowered.org/maven')
+    }
+    maven {
+        //This is needed for your JEI dependency
+        url = uri('https://maven.blamejared.com')
+    }
+    maven {
+        url "https://maven.cleanroommc.com"
+    }
+    maven {
+        // Quite naturally, the repository for you CodeChickenLib dependency
+        url "https://chickenbones.net/maven/"
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
+
+    implementation fg.deobf("mezz.jei:jei_1.12.2:4.16.1.302")
+    implementation fg.deobf("curse.maven:baubles-227083:2518667")
+    implementation fg.deobf("codechicken:CodeChickenLib:1.12.2-3.2.3.358:universal")
+    implementation fg.deobf("curse.maven:minefantasy-reforged-431996:6861487")
+
+    annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
+    annotationProcessor 'com.google.guava:guava:32.1.2-jre'
+    annotationProcessor 'com.google.code.gson:gson:2.8.9'
+
+    implementation ('zone.rong:mixinbooter:10.6') {
+        transitive = false
+    }
+    annotationProcessor ('zone.rong:mixinbooter:10.6') {
+        transitive = false
+    }
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+//This allows gradle to package the mod in a jar file
+jar {
+    archiveBaseName = mod_id
+    manifest {
+        attributes([
+                "Specification-Title": archivesBaseName,
+                "Specification-Vendor": "Lenvill",
+                "Specification-Version": "1", // We are version 1 of ourselves
+                "Implementation-Title": archivesBaseName,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" :"Lenvill",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+//This replaces all the "${text}" elements in the mcmod.info file with their intended values
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "mod_version", project.mod_version
+    inputs.property "mc_version", project.mc_version.toString()
+
+    // replace tokens in mcmod.info, and pack.mcmeta
+    filesMatching('mcmod.info'){
+        expand 'mod_version': project.mod_version,
+                'mc_version': project.mc_version.toString(),
+                'mod_id': project.mod_id,
+                'name': project.name,
+                'description': project.description,
+                'url': project.url,
+                'update_url': project.update_url
+    }
+}
+
+// replace @TOKENS@ in main file
+task replaceTokens(type: Sync) {
+    println 'replaceTokens'
+    from sourceSets.main.java
+    inputs.property 'version', project.mc_version.toString()
+    filter(ReplaceTokens, tokens: [VERSION: version.toString()])
+    filter(ReplaceTokens, tokens: [MCVERSION: "${project.mc_version}".toString()])
+    into "$buildDir/src"
+}
+
+compileJava {
+    source = replaceTokens.outputs
+}

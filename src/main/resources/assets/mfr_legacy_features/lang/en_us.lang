@@ -1,0 +1,12 @@
+itemGroup.legacy=[MF] Legacy Features Addon
+
+item.tea_leaf.name=Tea Leaf
+
+item.zyrridium_dust.name=Zyrridium Dust
+tile.zyrridium_ore.name=Zyrridium Ore
+tile.zyrridium_block.name=Zyrridium Block
+
+tile.ancient_granite.name=Ancient Granite
+tile.ancient_granite_brick.name=Ancient Granite Bricks
+tile.ancient_granite_brick_cracked.name=Cracked Ancient Granite Bricks
+tile.ancient_granite_brick_mossy.name=Mossy Ancient Granite Bricks

@@ -1,2 +1,3 @@
-# MFR_Legacy_Features
-Miscellaneous features from older Minefantasy versions brought forward and added to Minefantasy: Reforged
+## Base
+
+A base mod template for Lenvill's MFR addons.

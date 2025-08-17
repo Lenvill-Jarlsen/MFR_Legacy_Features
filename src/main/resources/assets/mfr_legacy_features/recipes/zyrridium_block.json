@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "ZZZ",
+        "ZZZ",
+        "ZZZ"
+    ],
+    "key":{
+        "Z": {
+            "item": "mfr_legacy_features:zyrridium_dust"
+        }
+    },
+    "result": {
+        "item": "mfr_legacy_features:zyrridium_block"
+    }
+}
