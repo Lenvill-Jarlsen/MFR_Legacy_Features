@@ -1,0 +1,29 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "bottom": "mfr_legacy_features:block/bedroll/bedroll_base",
+    "top": "mfr_legacy_features:block/bedroll/bedroll_feet_top",
+    "end": "mfr_legacy_features:block/bedroll/bedroll_feet_end",
+    "side": "mfr_legacy_features:block/bedroll/bedroll_feet_side",
+    "particle": "mfr_legacy_features:block/bedroll/bedroll_feet_top"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 3, 16],
+      "faces": {
+        "up": {"uv": [0, 16, 16, 0], "texture": "#top"},
+        "north": {"uv": [0, 7, 16, 10], "texture": "#end"},
+        "east": {"uv": [16, 7, 0, 10], "texture": "#side"},
+        "west": {"uv": [0, 7, 16, 10], "texture": "#side"}
+      }
+    },
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 0, 16 ],
+      "faces": {
+        "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#bottom" }
+      }
+    }
+  ]
+}

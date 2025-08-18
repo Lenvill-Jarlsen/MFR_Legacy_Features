@@ -54,7 +54,7 @@ public class ItemBedroll extends LegacyItemBase {
                     IBlockState iblockstate2 = LegacyBlocksInit.BEDROLL.getDefaultState().withProperty(BlockBedroll.OCCUPIED, Boolean.valueOf(false)).withProperty(BlockBedroll.FACING, enumfacing).withProperty(BlockBedroll.PART, BlockBedroll.EnumPartType.FOOT);
                     worldIn.setBlockState(pos, iblockstate2, 2 | 8);
 
-                    worldIn.setBlockState(pos, iblockstate2.withProperty(BlockBedroll.PART, BlockBedroll.EnumPartType.HEAD), 2 | 8);
+                    worldIn.setBlockState(blockpos, iblockstate2.withProperty(BlockBedroll.PART, BlockBedroll.EnumPartType.HEAD), 2 | 8);
                     SoundType soundtype = iblockstate2.getBlock().getSoundType(iblockstate2, worldIn, pos, player);
 
                     worldIn.playSound((EntityPlayer)null, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);

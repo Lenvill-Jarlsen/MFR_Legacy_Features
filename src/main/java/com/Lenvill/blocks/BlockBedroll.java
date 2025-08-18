@@ -36,11 +36,12 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Random;
 
+@SuppressWarnings("deprecation")
 public class BlockBedroll extends BlockHorizontal implements IClientRegister {
 
     public static final PropertyEnum<BlockBedroll.EnumPartType> PART = PropertyEnum.create("part", BlockBedroll.EnumPartType.class);
     public static final PropertyBool OCCUPIED = PropertyBool.create("occupied");
-    protected static final AxisAlignedBB BEDROLL_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.5625D, 1.0D);
+    protected static final AxisAlignedBB BEDROLL_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.1875, 1.0D);
 
     public BlockBedroll() {
         super(Material.CLOTH);
@@ -58,6 +59,7 @@ public class BlockBedroll extends BlockHorizontal implements IClientRegister {
     @Nonnull
     @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+        //MFRLegacyFeatures.LOG.info("getItemDropped Called");
         return (state.getValue(PART) == EnumPartType.FOOT) ? Items.AIR : LegacyItemsInit.bedroll;
     }
 
@@ -67,6 +69,7 @@ public class BlockBedroll extends BlockHorizontal implements IClientRegister {
         if (state.getValue(PART) == EnumPartType.HEAD) {
             spawnAsEntity(worldIn, pos, new ItemStack(LegacyItemsInit.bedroll, 1));
         }
+        //MFRLegacyFeatures.LOG.info("dropBlockAsItemWithChance Called");
     }
 
     @ParametersAreNonnullByDefault
@@ -78,6 +81,7 @@ public class BlockBedroll extends BlockHorizontal implements IClientRegister {
                 worldIn.setBlockToAir(blockpos);
             }
         }
+        //MFRLegacyFeatures.LOG.info("onBlockHarvest called");
     }
 
     // ---------------------------------------------------------------------------
@@ -162,6 +166,7 @@ public class BlockBedroll extends BlockHorizontal implements IClientRegister {
 
             worldIn.setBlockToAir(pos);
         }
+        //MFRLegacyFeatures.LOG.info("getItemDropped Called");
     }
 
     @ParametersAreNonnullByDefault
@@ -248,6 +253,8 @@ public class BlockBedroll extends BlockHorizontal implements IClientRegister {
         return EnumPushReaction.DESTROY;
     }
 
+    @Nonnull
+    @Override
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT;
@@ -270,11 +277,15 @@ public class BlockBedroll extends BlockHorizontal implements IClientRegister {
         }
     }
 
+    @Nonnull
+    @Override
     public IBlockState getStateFromMeta(int meta) {
         EnumFacing enumfacing = EnumFacing.byHorizontalIndex(meta);
         return (meta & 8) > 0 ? this.getDefaultState().withProperty(PART, EnumPartType.HEAD).withProperty(FACING, enumfacing).withProperty(OCCUPIED, Boolean.valueOf((meta & 4) > 0)) : this.getDefaultState().withProperty(PART, EnumPartType.FOOT).withProperty(FACING, enumfacing);
     }
 
+    @Nonnull
+    @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         if (state.getValue(PART) == EnumPartType.FOOT) {
             IBlockState iblockstate = worldIn.getBlockState(pos.offset((EnumFacing)state.getValue(FACING)));
@@ -288,15 +299,20 @@ public class BlockBedroll extends BlockHorizontal implements IClientRegister {
         return state;
     }
 
+    @Nonnull
+    @Override
     public IBlockState withRotation(IBlockState state, Rotation rot){
         return state.withProperty(FACING, rot.rotate((EnumFacing)state.getValue(FACING)));
     }
 
+    @Nonnull
+    @Override
     public IBlockState withMirror(IBlockState state, Mirror mirrorIn)
     {
         return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
     }
 
+    @Override
     public int getMetaFromState(IBlockState state){
         int i = 0;
         i = i | ((EnumFacing)state.getValue(FACING)).getHorizontalIndex();
@@ -313,14 +329,21 @@ public class BlockBedroll extends BlockHorizontal implements IClientRegister {
         return i;
     }
 
-    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
-    {
+    @Nonnull
+    @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
     }
 
-    protected BlockStateContainer createBlockState()
-    {
+    @Nonnull
+    @Override
+    protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, new IProperty[] {FACING, PART, OCCUPIED});
+    }
+
+    @Override
+    public boolean isBed(IBlockState state, IBlockAccess world, BlockPos pos, @Nullable Entity player) {
+        return true;
     }
 
     @SideOnly(Side.CLIENT)
